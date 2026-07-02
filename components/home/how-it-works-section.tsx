@@ -5,93 +5,94 @@ import { Button } from '@/components/ui/button';
 
 const steps = [
   {
-    step: 1,
+    n: '01',
     icon: ClipboardList,
     title: 'Get Your Quote',
-    description: 'Use our instant calculator or call us. Fixed, transparent prices — no hidden fees, ever.',
-    color: 'bg-primary-500',
-    lightColor: 'bg-primary-50',
-    textColor: 'text-primary-600',
+    body: 'Use our instant calculator or call us. Fixed prices, zero hidden fees — always.',
+    iconBg: 'bg-primary-50',
+    iconColor: 'text-primary-600',
+    numColor: 'text-primary-400',
   },
   {
-    step: 2,
+    n: '02',
     icon: UserCheck,
     title: 'We Match You',
-    description: 'We assign a vetted, experienced local cleaner suited to your home and schedule.',
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
+    body: 'We assign a vetted, experienced local cleaner perfectly suited to your home.',
+    iconBg: 'bg-accent-50',
+    iconColor: 'text-accent-600',
+    numColor: 'text-accent-400',
   },
   {
-    step: 3,
+    n: '03',
     icon: Sparkles,
     title: 'We Clean',
-    description: 'Your cleaner arrives on time with everything needed and transforms your space.',
-    color: 'bg-amber-500',
-    lightColor: 'bg-amber-50',
-    textColor: 'text-amber-600',
+    body: 'Your cleaner arrives on time, fully equipped, and transforms your space.',
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    numColor: 'text-amber-400',
   },
   {
-    step: 4,
+    n: '04',
     icon: ThumbsUp,
     title: 'You Enjoy',
-    description: 'Come home to perfection. Rate your clean and rebook with a single tap.',
-    color: 'bg-violet-500',
-    lightColor: 'bg-violet-50',
-    textColor: 'text-violet-600',
+    body: 'Come home to a spotless space. Rate your clean and rebook in one tap.',
+    iconBg: 'bg-violet-50',
+    iconColor: 'text-violet-600',
+    numColor: 'text-violet-400',
   },
 ];
 
 export default function HowItWorksSection() {
   return (
-    <section className="py-24 bg-secondary-50">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="text-center mb-16">
-          <span className="inline-block text-primary-500 font-semibold text-sm uppercase tracking-widest mb-3">Simple Process</span>
-          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-secondary-800 leading-tight mb-4">
+    <section className="bg-secondary-50 py-24">
+      <div className="mx-auto max-w-7xl px-4">
+
+        <div className="mb-16 text-center">
+          <span className="mb-3 inline-block text-sm font-bold uppercase tracking-widest text-primary-500">
+            Simple Process
+          </span>
+          <h2 className="font-heading text-4xl font-extrabold leading-tight text-secondary-800 md:text-5xl mb-4">
             Spotless in 4 Easy Steps
           </h2>
-          <p className="text-secondary-500 max-w-lg mx-auto text-base leading-relaxed">
-            Getting a professionally cleaned home has never been simpler. Book online in minutes, relax all day.
+          <p className="mx-auto max-w-lg text-base leading-relaxed text-secondary-500">
+            From booking to a gleaming home in minutes. No fuss, no faff — just a brilliant clean.
           </p>
         </div>
 
-        <div className="relative">
-          {/* Desktop connector */}
-          <div className="absolute top-[52px] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px bg-gradient-to-r from-primary-200 via-accent-200 to-violet-200 hidden lg:block pointer-events-none" />
+        {/* Steps */}
+        <div className="relative grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Connector line — desktop only */}
+          <div className="pointer-events-none absolute left-[calc(12.5%+2.5rem)] right-[calc(12.5%+2.5rem)] top-12 hidden h-px bg-gradient-to-r from-primary-200 via-accent-200 via-amber-200 to-violet-200 lg:block" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step) => {
-              const Icon = step.icon;
-              return (
-                <div key={step.step} className="relative group">
-                  <div className="flex flex-col items-center text-center bg-white rounded-2xl p-7 shadow-soft hover:shadow-medium transition-all duration-300 hover:-translate-y-1.5 border border-secondary-100">
-                    {/* Step number + icon */}
-                    <div className="relative mb-5">
-                      <div className={`w-16 h-16 ${step.lightColor} rounded-2xl flex items-center justify-center mb-0 group-hover:scale-110 transition-transform duration-300`}>
-                        <Icon className={`w-7 h-7 ${step.textColor}`} />
-                      </div>
-                      <div className={`absolute -top-2 -right-2 w-6 h-6 ${step.color} rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm`}>
-                        {step.step}
-                      </div>
-                    </div>
-                    <h3 className="font-heading font-bold text-secondary-800 text-lg mb-2">{step.title}</h3>
-                    <p className="text-secondary-500 text-sm leading-relaxed">{step.description}</p>
+          {steps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <div key={step.n} className="group relative">
+                <div className="flex h-full flex-col items-center rounded-2xl border border-secondary-100 bg-white p-7 text-center shadow-soft transition-all duration-300 hover:-translate-y-2 hover:shadow-medium">
+                  {/* Large background number */}
+                  <div className={`mb-1 font-heading text-6xl font-extrabold leading-none select-none ${step.numColor} opacity-10`}>
+                    {step.n}
                   </div>
+                  {/* Icon box — overlaps the number visually */}
+                  <div className={`-mt-8 mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${step.iconBg} transition-transform duration-300 group-hover:scale-110 shadow-soft`}>
+                    <Icon className={`h-6 w-6 ${step.iconColor}`} />
+                  </div>
+                  <h3 className="font-heading mb-2 text-lg font-bold text-secondary-800">{step.title}</h3>
+                  <p className="text-sm leading-relaxed text-secondary-500">{step.body}</p>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="mt-12 text-center">
           <Link href="/book-online">
             <Button size="xl">
               Book Your Clean Now
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="h-4 w-4" />
             </Button>
           </Link>
-          <p className="text-secondary-400 text-sm mt-3">Takes less than 2 minutes. No credit card required.</p>
+          <p className="mt-3 text-sm text-secondary-400">Takes less than 2 minutes · No credit card required</p>
         </div>
       </div>
     </section>

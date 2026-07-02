@@ -1,123 +1,118 @@
 import React from 'react';
 import Link from 'next/link';
-import { CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle, ArrowRight, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const services = [
+const plans = [
   {
     name: 'Domestic Cleaning',
-    description: 'Regular weekly or fortnightly home cleaning',
+    sub: 'Weekly or fortnightly',
     from: '£59',
-    popular: false,
-    color: 'border-primary-200',
-    badge: '',
+    tag: null,
     features: ['Same cleaner every visit', 'Flexible scheduling', 'All products included'],
     href: '/domestic-cleaning',
+    borderClass: 'border-secondary-150',
+    btnVariant: 'outline' as const,
   },
   {
     name: 'Deep Cleaning',
-    description: 'Thorough top-to-bottom clean of your entire home',
+    sub: 'One-off thorough clean',
     from: '£129',
-    popular: true,
-    color: 'border-primary-500',
-    badge: 'Most Booked',
-    features: ['Inside appliances', 'Behind furniture', 'Satisfaction guarantee'],
+    tag: 'Most Popular',
+    features: ['Inside appliances', 'Behind furniture', 'Guarantee included'],
     href: '/deep-cleaning',
+    borderClass: 'border-primary-400',
+    btnVariant: 'primary' as const,
   },
   {
     name: 'End of Tenancy',
-    description: 'Deposit-back guaranteed move-out clean',
+    sub: 'Deposit-back guaranteed',
     from: '£149',
-    popular: false,
-    color: 'border-amber-200',
-    badge: '',
-    features: ['Landlord approved', 'Re-clean guarantee', 'Certificate included'],
+    tag: null,
+    features: ['Landlord approved', 'Re-clean if needed', 'Certificate issued'],
     href: '/end-of-tenancy-cleaning',
+    borderClass: 'border-secondary-150',
+    btnVariant: 'outline' as const,
   },
   {
     name: 'Office Cleaning',
-    description: 'Professional commercial cleaning solutions',
+    sub: 'Commercial solutions',
     from: '£99',
-    popular: false,
-    color: 'border-violet-200',
-    badge: '',
-    features: ['After-hours available', 'Supply restocking', 'Flexible contracts'],
+    tag: null,
+    features: ['After-hours available', 'Supply restocking', 'Bespoke contracts'],
     href: '/office-cleaning',
+    borderClass: 'border-secondary-150',
+    btnVariant: 'outline' as const,
   },
 ];
 
 export default function PricingPreviewSection() {
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="text-center mb-14">
-          <span className="inline-block text-primary-500 font-semibold text-sm uppercase tracking-widest mb-3">
-            Pricing Preview
+    <section className="bg-white py-24">
+      <div className="mx-auto max-w-7xl px-4">
+
+        <div className="mb-14 text-center">
+          <span className="mb-3 inline-block text-sm font-bold uppercase tracking-widest text-primary-500">
+            Transparent Pricing
           </span>
-          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-secondary-800 leading-tight mb-4">
-            Transparent Prices, No Surprises
+          <h2 className="font-heading text-4xl font-extrabold leading-tight text-secondary-800 md:text-5xl mb-4">
+            No Hidden Fees. Ever.
           </h2>
-          <p className="text-secondary-500 max-w-lg mx-auto text-base leading-relaxed">
-            Fixed, all-inclusive pricing. No hidden fees, no call-out charges. All prices include VAT.
+          <p className="mx-auto max-w-lg text-base leading-relaxed text-secondary-500">
+            Fixed, all-inclusive pricing. What you see is what you pay — all prices include VAT.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-          {services.map((svc) => (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {plans.map((plan) => (
             <div
-              key={svc.name}
-              className={`relative rounded-2xl border-2 ${svc.color} p-6 flex flex-col ${svc.popular ? 'shadow-medium' : 'hover:shadow-soft'} transition-shadow duration-300`}
+              key={plan.name}
+              className={`relative flex flex-col rounded-2xl border-2 ${plan.borderClass} p-6 transition-shadow duration-300 ${plan.tag ? 'shadow-[0_8px_30px_-6px_rgba(0,174,239,0.25)]' : 'hover:shadow-soft'}`}
             >
-              {svc.popular && (
+              {plan.tag && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-                    <Sparkles className="w-3 h-3" />
-                    {svc.badge}
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary-500 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
+                    <Zap className="h-3 w-3" />
+                    {plan.tag}
                   </span>
                 </div>
               )}
 
               <div className="mb-4">
-                <h3 className="font-heading font-bold text-secondary-800 text-base mb-1">{svc.name}</h3>
-                <p className="text-secondary-400 text-xs leading-snug">{svc.description}</p>
+                <h3 className="font-heading mb-0.5 text-base font-bold text-secondary-800">{plan.name}</h3>
+                <p className="text-xs text-secondary-400">{plan.sub}</p>
               </div>
 
               <div className="mb-5">
-                <span className="text-xs text-secondary-400 font-medium">From</span>
-                <div className="font-heading font-bold text-4xl text-secondary-800 leading-none mt-0.5">
-                  {svc.from}
-                </div>
-                <span className="text-xs text-secondary-400">inc. VAT</span>
+                <p className="text-xs font-medium text-secondary-400">From</p>
+                <p className="font-heading text-4xl font-extrabold leading-none text-secondary-800">{plan.from}</p>
+                <p className="mt-0.5 text-[11px] text-secondary-400">inc. VAT</p>
               </div>
 
-              <ul className="space-y-2 mb-6 flex-1">
-                {svc.features.map((f) => (
+              <ul className="mb-6 flex-1 space-y-2.5">
+                {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-xs text-secondary-600">
-                    <CheckCircle className="w-3.5 h-3.5 text-accent-500 flex-shrink-0" />
+                    <CheckCircle className="h-3.5 w-3.5 shrink-0 text-accent-500" />
                     {f}
                   </li>
                 ))}
               </ul>
 
-              <Link href={svc.href}>
-                <Button
-                  variant={svc.popular ? 'primary' : 'outline'}
-                  size="sm"
-                  className="w-full"
-                >
+              <Link href={plan.href}>
+                <Button variant={plan.btnVariant} size="sm" className="w-full">
                   Learn More
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
           ))}
         </div>
 
-        <div className="text-center">
+        <div className="mt-10 text-center">
           <Link href="/pricing">
-            <Button size="lg" variant="ghost" className="text-primary-600 hover:text-primary-700 hover:bg-primary-50">
+            <Button variant="ghost" size="lg" className="text-primary-600 hover:bg-primary-50 hover:text-primary-700">
               Use our full instant quote calculator
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>

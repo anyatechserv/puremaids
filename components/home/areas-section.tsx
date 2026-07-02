@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, ArrowRight } from 'lucide-react';
+import { MapPin, ArrowRight, CheckCircle } from 'lucide-react';
 
-const areaGroups = [
+const groups = [
   { region: 'Central', areas: ['Westminster', 'City of London', 'Covent Garden', 'Marylebone'] },
   { region: 'North', areas: ['Camden', 'Islington', 'Hackney', 'Barnet'] },
   { region: 'South', areas: ['Brixton', 'Clapham', 'Battersea', 'Wimbledon'] },
@@ -13,41 +13,47 @@ const areaGroups = [
 
 export default function AreasSection() {
   return (
-    <section className="py-24 bg-secondary-800">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-14">
+    <section className="bg-secondary-800 py-24">
+      <div className="mx-auto max-w-7xl px-4">
+
+        {/* Header */}
+        <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <span className="inline-block text-primary-400 font-semibold text-sm uppercase tracking-widest mb-3">
+            <span className="mb-3 inline-block text-sm font-bold uppercase tracking-widest text-primary-400">
               Where We Work
             </span>
-            <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-white leading-tight">
-              Covering 30+ London Areas
+            <h2 className="font-heading text-4xl font-extrabold leading-tight text-white md:text-5xl">
+              Covering 30+ Areas<br />Across London
             </h2>
           </div>
           <Link
             href="/areas"
-            className="inline-flex items-center gap-2 text-primary-400 font-semibold text-sm hover:text-primary-300 transition-colors flex-shrink-0"
+            className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary-400 transition-colors hover:text-primary-300"
           >
-            See full coverage map
-            <ArrowRight className="w-4 h-4" />
+            See full coverage
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {areaGroups.map((group) => (
-            <div key={group.region} className="bg-secondary-700/60 border border-secondary-600/40 rounded-2xl p-5 hover:bg-secondary-700 transition-colors duration-200">
-              <div className="flex items-center gap-1.5 mb-3">
-                <MapPin className="w-3.5 h-3.5 text-primary-400 flex-shrink-0" />
-                <span className="text-primary-400 font-semibold text-xs uppercase tracking-wider">{group.region}</span>
+        {/* Area cards */}
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          {groups.map((g) => (
+            <div
+              key={g.region}
+              className="rounded-2xl border border-secondary-700/60 bg-secondary-700/40 p-5 transition-colors duration-200 hover:bg-secondary-700"
+            >
+              <div className="mb-3 flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-primary-400">{g.region}</span>
               </div>
               <ul className="space-y-2">
-                {group.areas.map((area) => (
-                  <li key={area}>
+                {g.areas.map((a) => (
+                  <li key={a}>
                     <Link
                       href="/areas"
-                      className="text-secondary-300 hover:text-primary-300 transition-colors text-sm"
+                      className="text-sm text-secondary-300 transition-colors hover:text-primary-300"
                     >
-                      {area}
+                      {a}
                     </Link>
                   </li>
                 ))}
@@ -56,13 +62,21 @@ export default function AreasSection() {
           ))}
         </div>
 
-        <div className="mt-10 bg-secondary-700/40 border border-secondary-600/30 rounded-2xl p-7 flex flex-col md:flex-row items-center justify-between gap-5">
-          <div>
-            <p className="font-heading font-semibold text-white text-lg mb-1">Don&apos;t see your area?</p>
-            <p className="text-secondary-400 text-sm">We&apos;re expanding constantly. Contact us and we&apos;ll check if we cover your postcode.</p>
+        {/* "Not listed" nudge */}
+        <div className="mt-8 flex flex-col items-center justify-between gap-5 rounded-2xl border border-secondary-700/50 bg-secondary-700/30 p-7 md:flex-row">
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-500/15">
+              <MapPin className="h-5 w-5 text-primary-400" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-white">Don&apos;t see your area?</p>
+              <p className="mt-0.5 text-sm text-secondary-400">
+                We&apos;re expanding constantly — contact us to check your postcode.
+              </p>
+            </div>
           </div>
-          <Link href="/contact" className="flex-shrink-0">
-            <button className="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+          <Link href="/contact" className="shrink-0">
+            <button className="rounded-xl bg-primary-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-600">
               Check My Area
             </button>
           </Link>
