@@ -20,6 +20,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(`https://${SITE_CONFIG.domain}`),
   title: {
     default: `${SITE_CONFIG.name} | Professional Cleaning Services London`,
     template: `%s | ${SITE_CONFIG.name}`,
