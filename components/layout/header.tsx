@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Phone, Menu, X, ChevronDown } from 'lucide-react';
+import { Phone, Menu, X, ChevronDown, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SITE_CONFIG, SERVICES } from '@/lib/constants';
+import { supabase } from '@/lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 const navLinks = [
   {
@@ -25,11 +26,20 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [authUser, setAuthUser] = useState<SupabaseUser | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setAuthUser(session?.user ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setAuthUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
@@ -120,6 +130,19 @@ export default function Header() {
                 <Phone className="w-4 h-4 text-primary-500" />
                 {SITE_CONFIG.phone}
               </a>
+              {authUser
+                ? (
+                  <Link href="/account"
+                    className="flex items-center gap-1.5 text-sm font-semibold text-secondary-700 hover:text-primary-600 transition-colors px-3 py-1.5 rounded-xl border border-secondary-200 hover:border-primary-200 hover:bg-primary-50">
+                    <User className="w-4 h-4" /> My Account
+                  </Link>
+                )
+                : (
+                  <Link href="/login"
+                    className="flex items-center gap-1.5 text-sm font-semibold text-secondary-600 hover:text-primary-600 transition-colors">
+                    <LogIn className="w-4 h-4" /> Sign In
+                  </Link>
+                )}
               <Link href="/book-online">
                 <Button size="md">Book Online</Button>
               </Link>
@@ -175,6 +198,17 @@ export default function Header() {
                   </Link>
                 )
               )}
+              {authUser
+                ? (
+                  <Link href="/account" className="flex items-center gap-2 p-3 mt-2 rounded-xl bg-secondary-50 text-secondary-700 font-semibold" onClick={() => setMobileOpen(false)}>
+                    <User className="w-4 h-4" /> My Account
+                  </Link>
+                )
+                : (
+                  <Link href="/login" className="flex items-center gap-2 p-3 mt-2 rounded-xl bg-secondary-50 text-secondary-700 font-semibold" onClick={() => setMobileOpen(false)}>
+                    <LogIn className="w-4 h-4" /> Sign In
+                  </Link>
+                )}
               <Link href="/book-online" className="block mt-3">
                 <Button className="w-full" size="lg" onClick={() => setMobileOpen(false)}>
                   Book Online

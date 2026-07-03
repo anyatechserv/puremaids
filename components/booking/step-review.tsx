@@ -67,10 +67,11 @@ export default function StepReview({ data, onConfirm, onBack }: Props) {
     try {
       await onConfirm();
     } catch (err: unknown) {
-      setError('Something went wrong. Please try again or call us.');
-    } finally {
+      const msg = err instanceof Error ? err.message : 'Something went wrong';
+      setError(msg + ' — please try again or call us.');
       setLoading(false);
     }
+    // Note: don't set loading=false on success — the page redirects to Stripe
   };
 
   return (
@@ -80,13 +81,17 @@ export default function StepReview({ data, onConfirm, onBack }: Props) {
         onClick={onBack}
         className="flex items-center gap-1.5 text-secondary-400 hover:text-secondary-600 text-sm mb-5 transition-colors"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
         Back
       </button>
 
       <p className="text-xs font-bold uppercase tracking-widest text-primary-500 mb-2">Step 7 of 7</p>
-      <h2 className="font-heading font-bold text-2xl text-secondary-800 mb-1">Review & Confirm</h2>
-      <p className="text-secondary-500 text-sm mb-7">Please check your booking details before confirming.</p>
+      <h2 className="font-heading font-bold text-2xl text-secondary-800 mb-1">Review & Pay Deposit</h2>
+      <p className="text-secondary-500 text-sm mb-7">
+        Check your details, then pay your 25% deposit to secure the booking.
+      </p>
 
       {error && (
         <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4 mb-5">
@@ -117,7 +122,7 @@ export default function StepReview({ data, onConfirm, onBack }: Props) {
       </div>
 
       {/* Price summary */}
-      <div className="bg-secondary-50 rounded-2xl p-5 mb-6">
+      <div className="bg-secondary-50 rounded-2xl p-5 mb-4">
         <h3 className="font-semibold text-secondary-700 text-xs uppercase tracking-wider mb-3">Price Summary</h3>
         <Row label="Base price" value={formatPrice(data.basePricePence)} />
         {selectedExtras.map((e) => (
@@ -130,39 +135,48 @@ export default function StepReview({ data, onConfirm, onBack }: Props) {
         <p className="text-xs text-secondary-400 text-right mt-1">inc. VAT</p>
       </div>
 
-      {/* Deposit + Stripe notice */}
-      <div className="bg-primary-50 border border-primary-100 rounded-2xl p-5 mb-6">
+      {/* Deposit box */}
+      <div className="bg-primary-500 rounded-2xl p-5 mb-6">
         <div className="flex items-start gap-3">
-          <CreditCard className="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold text-primary-700 text-sm mb-1">
-              25% Deposit: {formatPrice(deposit)}
-            </p>
-            <p className="text-xs text-secondary-500 leading-relaxed">
-              A refundable deposit secures your booking. The remaining {formatPrice(total - deposit)} is paid on the day of your clean. Secure payment powered by Stripe.
+          <CreditCard className="w-5 h-5 text-white shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <div className="flex items-baseline justify-between gap-2 mb-1">
+              <p className="font-bold text-white text-sm">Deposit due today</p>
+              <p className="font-heading font-extrabold text-2xl text-white leading-none">{formatPrice(deposit)}</p>
+            </div>
+            <p className="text-xs text-primary-100 leading-relaxed">
+              25% of total secures your booking. The remaining{' '}
+              <strong className="text-white">{formatPrice(total - deposit)}</strong> is paid on the day of your clean.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Stripe not yet configured notice */}
-      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
-        <Lock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-semibold text-amber-700">Stripe payments coming soon</p>
-          <p className="text-xs text-amber-600 mt-0.5">
-            Your booking will be confirmed and stored. Our team will call you within 2 hours to take a deposit over the phone.
-          </p>
-        </div>
-      </div>
-
-      <Button size="lg" className="w-full" onClick={handleConfirm} disabled={loading}>
-        {loading ? 'Confirming booking...' : 'Confirm Booking'}
-        {!loading && <Shield className="w-4 h-4" />}
+      <Button
+        size="lg"
+        className="w-full shadow-lg shadow-primary-500/20"
+        onClick={handleConfirm}
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            </svg>
+            Redirecting to Stripe...
+          </>
+        ) : (
+          <>
+            <Shield className="w-4 h-4" />
+            Pay {formatPrice(deposit)} Deposit Securely
+          </>
+        )}
       </Button>
+
       <p className="text-xs text-secondary-400 text-center mt-3 flex items-center justify-center gap-1.5">
         <Lock className="w-3 h-3" />
-        Your data is encrypted and never shared with third parties.
+        Powered by Stripe · 256-bit SSL encryption · PCI compliant
       </p>
     </div>
   );
