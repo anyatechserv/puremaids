@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import BookForm from './book-form';
+import BookingWizard from '@/components/booking/booking-wizard';
 
 export const metadata: Metadata = {
-  title: 'Book Online | PureMaids Professional Cleaning London',
+  title: 'Book Online | PureMaids Professional Cleaning',
   description:
-    'Book your professional cleaning service online in under 2 minutes. Domestic, deep, end of tenancy and office cleaning across London. No payment needed to book.',
+    'Book your professional cleaning service online in under 3 minutes. Choose your service, date, and extras — get an instant price and secure your slot.',
 };
 
 export default function BookOnlinePage() {
-  return <BookForm />;
+  return <BookingWizard />;
 }
