@@ -6,9 +6,9 @@ import { SERVICES } from '@/lib/constants';
 const details = [
   {
     slug: 'domestic-cleaning',
-    tagline: 'Your home, your way',
-    description: 'Flexible weekly or fortnightly cleaning by a dedicated cleaner who learns your home perfectly.',
-    features: ['Same cleaner every visit', 'Your own custom checklist', 'Flexible reschedule anytime'],
+    tagline: 'House cleaning Bolton',
+    description: 'Regular weekly or fortnightly domestic cleaning across Bolton, Manchester and Bury. Your dedicated cleaner learns your home and delivers consistent, spotless results every visit.',
+    features: ['Same cleaner every visit', 'Custom checklist for your home', 'Flexible reschedule anytime'],
     image: 'https://images.pexels.com/photos/4108741/pexels-photo-4108741.jpeg',
     from: '£59',
     accent: '#00AEEF',
@@ -16,8 +16,8 @@ const details = [
   },
   {
     slug: 'deep-cleaning',
-    tagline: 'Every inch, spotless',
-    description: 'Top-to-bottom intensive clean — inside appliances, behind furniture, skirting boards and beyond.',
+    tagline: 'Deep cleaning Bolton',
+    description: 'Top-to-bottom intensive deep clean for homes across the North West. Inside appliances, behind furniture, skirting boards, carpets — nothing missed, every time.',
     features: ['Inside oven, fridge & microwave', 'Skirting boards & coving', '100% satisfaction guarantee'],
     image: 'https://images.pexels.com/photos/6195130/pexels-photo-6195130.jpeg',
     from: '£129',
@@ -26,9 +26,9 @@ const details = [
   },
   {
     slug: 'end-of-tenancy-cleaning',
-    tagline: 'Get your deposit back',
-    description: 'Move-out clean to landlord & letting agent standards — or we re-clean free.',
-    features: ['Deposit-back guarantee', 'Letting agent approved', 'Full written certificate'],
+    tagline: 'End of tenancy Bolton',
+    description: 'Move-out cleans across Bolton and Manchester to landlord and letting agent standards. Deposit-back guaranteed — or we re-clean free of charge within 48 hours.',
+    features: ['Deposit-back guarantee', 'Letting agent approved checklist', 'Full written certificate'],
     image: 'https://images.pexels.com/photos/7534761/pexels-photo-7534761.jpeg',
     from: '£149',
     accent: '#F59E0B',
@@ -36,9 +36,9 @@ const details = [
   },
   {
     slug: 'office-cleaning',
-    tagline: 'Your workplace, pristine',
-    description: 'Professional commercial cleaning around your schedule — including early-morning and after-hours.',
-    features: ['After-hours available', 'Supply restocking', 'COSHH-compliant products'],
+    tagline: 'Office cleaning Bolton',
+    description: 'Professional office and commercial cleaning across Bolton and Manchester. Flexible scheduling including early-morning and after-hours cleans to suit your business.',
+    features: ['After-hours & weekend available', 'Supply restocking included', 'COSHH-compliant products'],
     image: 'https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg',
     from: '£99',
     accent: '#8B5CF6',
@@ -58,11 +58,11 @@ export default function ServicesSection() {
               Our Services
             </span>
             <h2 className="font-heading text-4xl font-extrabold leading-[1.1] text-secondary-800 md:text-5xl">
-              Every Clean You Need,<br />Done Brilliantly
+              Professional Cleaning Services<br />Bolton &amp; Greater Manchester
             </h2>
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-secondary-500 md:text-right">
-            From regular home maintenance to specialist deep cleans — every corner covered.
+            Serving Bolton, Manchester, Bury, Wigan, Preston and all surrounding areas.
           </p>
         </div>
 

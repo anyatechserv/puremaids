@@ -1,14 +1,32 @@
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, ArrowRight, CheckCircle } from 'lucide-react';
+import { MapPin, ArrowRight } from 'lucide-react';
 
 const groups = [
-  { region: 'Central', areas: ['Westminster', 'City of London', 'Covent Garden', 'Marylebone'] },
-  { region: 'North', areas: ['Camden', 'Islington', 'Hackney', 'Barnet'] },
-  { region: 'South', areas: ['Brixton', 'Clapham', 'Battersea', 'Wimbledon'] },
-  { region: 'East', areas: ['Canary Wharf', 'Stratford', 'Greenwich', 'Bethnal Green'] },
-  { region: 'West', areas: ['Chelsea', 'Kensington', 'Fulham', 'Richmond'] },
-  { region: 'NW / SW', areas: ['Harrow', 'Wembley', 'Ealing', 'Kingston'] },
+  {
+    region: 'Bolton',
+    areas: ['Bolton Town Centre', 'Farnworth', 'Horwich', 'Westhoughton'],
+  },
+  {
+    region: 'Manchester',
+    areas: ['Manchester City', 'Salford', 'Eccles', 'Stretford'],
+  },
+  {
+    region: 'Bury',
+    areas: ['Bury', 'Radcliffe', 'Ramsbottom', 'Heywood'],
+  },
+  {
+    region: 'Wigan',
+    areas: ['Wigan', 'Leigh', 'Atherton', 'Tyldesley'],
+  },
+  {
+    region: 'Preston',
+    areas: ['Preston', 'Chorley', 'Leyland', 'Bamber Bridge'],
+  },
+  {
+    region: 'North West',
+    areas: ['Blackburn', 'Burnley', 'Rochdale', 'Oldham'],
+  },
 ];
 
 export default function AreasSection() {
@@ -20,17 +38,20 @@ export default function AreasSection() {
         <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <span className="mb-3 inline-block text-sm font-bold uppercase tracking-widest text-primary-400">
-              Where We Work
+              Where We Clean
             </span>
             <h2 className="font-heading text-4xl font-extrabold leading-tight text-white md:text-5xl">
-              Covering 30+ Areas<br />Across London
+              Covering Bolton, Manchester<br />&amp; the North West
             </h2>
+            <p className="mt-3 max-w-xl text-secondary-400 text-sm leading-relaxed">
+              From Bolton town centre to Preston, Wigan and Bury — our local cleaners know your area and are ready to book.
+            </p>
           </div>
           <Link
             href="/areas"
             className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary-400 transition-colors hover:text-primary-300"
           >
-            See full coverage
+            See full coverage map
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -69,15 +90,15 @@ export default function AreasSection() {
               <MapPin className="h-5 w-5 text-primary-400" />
             </div>
             <div>
-              <p className="font-heading font-bold text-white">Don&apos;t see your area?</p>
+              <p className="font-heading font-bold text-white">Don&apos;t see your town?</p>
               <p className="mt-0.5 text-sm text-secondary-400">
-                We&apos;re expanding constantly — contact us to check your postcode.
+                We cover 30+ towns across the North West — contact us to confirm your postcode.
               </p>
             </div>
           </div>
           <Link href="/contact" className="shrink-0">
             <button className="rounded-xl bg-primary-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-600">
-              Check My Area
+              Check My Postcode
             </button>
           </Link>
         </div>

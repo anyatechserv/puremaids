@@ -4,55 +4,55 @@ import { Star, Quote } from 'lucide-react';
 
 const reviews = [
   {
-    name: 'Sarah Johnson',
-    location: 'Chelsea, London',
+    name: 'Sarah Mitchell',
+    location: 'Bolton, BL1',
     service: 'Domestic Cleaning',
-    text: 'Absolutely outstanding. My 3-bed flat was cleaned top to bottom — every surface spotless. My regular cleaner always goes above and beyond. Couldn\'t ask for more.',
-    initials: 'SJ',
+    text: 'Absolutely outstanding. My 3-bed home was cleaned top to bottom — every surface spotless. My regular cleaner always goes above and beyond. Couldn\'t ask for more.',
+    initials: 'SM',
     color: 'bg-primary-500',
     featured: true,
   },
   {
     name: 'Marcus Thompson',
-    location: 'Canary Wharf',
+    location: 'Manchester, M14',
     service: 'End of Tenancy',
-    text: 'Got my full £2,400 deposit back. The landlord was genuinely impressed. Worth every penny and completely stress-free. I\'d recommend PureMaids to anyone moving out.',
+    text: 'Got my full £1,800 deposit back. The landlord was genuinely impressed. Worth every penny and completely stress-free. I\'d recommend PureMaids to anyone moving out in Manchester.',
     initials: 'MT',
     color: 'bg-accent-500',
     featured: false,
   },
   {
     name: 'Emma Williams',
-    location: 'Clapham, London',
+    location: 'Bury, BL9',
     service: 'Regular Cleaning',
-    text: "I've tried many cleaning companies. PureMaids is by far the best — same cleaner every fortnight, always on time, always brilliant. Genuinely couldn't live without them.",
+    text: "I've tried two other cleaning companies in Bury. PureMaids is by far the best — same cleaner every fortnight, always on time, always brilliant. Genuinely couldn't live without them.",
     initials: 'EW',
     color: 'bg-rose-500',
     featured: false,
   },
   {
     name: 'James Peters',
-    location: 'Fulham, London',
+    location: 'Horwich, BL6',
     service: 'Deep Cleaning',
-    text: 'Booked a deep clean before a family event. The house looked incredible — places I hadn\'t thought to clean in years were spotless. The team were efficient and professional.',
+    text: 'Booked a deep clean before putting the house on the market. The place looked incredible — the estate agent commented on how clean it was. Efficient, professional and worth every penny.',
     initials: 'JP',
     color: 'bg-amber-500',
     featured: false,
   },
   {
     name: 'Priya Sharma',
-    location: 'Islington, London',
+    location: 'Wigan, WN1',
     service: 'Domestic Cleaning',
-    text: 'The DBS checks gave me real peace of mind. Our cleaner is meticulous, trustworthy, and wonderful with our two cats. Booked solidly for 18 months now.',
+    text: 'The DBS checks gave me real peace of mind. Our cleaner is meticulous, trustworthy, and wonderful with our two children. Booked solidly for 18 months now and never had an issue.',
     initials: 'PS',
     color: 'bg-violet-500',
     featured: false,
   },
   {
     name: 'David Chen',
-    location: 'Richmond, Surrey',
+    location: 'Preston, PR1',
     service: 'Office Cleaning',
-    text: 'Contract for our 15-person office. The team arrives before 8am every morning — workspace is immaculate. Professional, discreet, reliable. Our staff love it.',
+    text: 'We have a contract for our Preston office. The team arrives before 8am every morning — workspace is always immaculate. Professional, discreet, and reliable. Our staff love it.',
     initials: 'DC',
     color: 'bg-teal-500',
     featured: false,
@@ -81,7 +81,7 @@ export default function TestimonialsSection() {
               Customer Reviews
             </span>
             <h2 className="font-heading text-4xl font-extrabold leading-[1.1] text-secondary-800 md:text-5xl">
-              Loved by Thousands<br />of UK Customers
+              Loved by Thousands Across<br />Bolton &amp; Greater Manchester
             </h2>
           </div>
 

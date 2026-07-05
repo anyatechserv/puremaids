@@ -108,25 +108,24 @@ export default function HeroSection() {
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}
               </div>
-              <span className="text-xs font-semibold text-white/85">Trusted by 10,000+ homes</span>
+              <span className="text-xs font-semibold text-white/85">Trusted by 10,000+ homes across the North West</span>
             </div>
 
             {/* Headline */}
             <h1 className="font-heading mb-6 leading-[1.06] tracking-tight text-white">
-              <span className="block text-5xl font-extrabold md:text-6xl lg:text-7xl">Professional</span>
               <span className="block text-5xl font-extrabold md:text-6xl lg:text-7xl">House Cleaning</span>
+              <span className="block text-5xl font-extrabold md:text-6xl lg:text-7xl">Bolton &amp;</span>
               <span className="block text-5xl font-extrabold md:text-6xl lg:text-7xl">
-                Across the{' '}
                 <span className="relative inline-block text-primary-400">
-                  UK
+                  Greater Manchester
                   <svg
                     aria-hidden="true"
                     className="absolute -bottom-1.5 left-0 w-full"
-                    viewBox="0 0 80 10"
+                    viewBox="0 0 300 10"
                     preserveAspectRatio="none"
                     style={{ height: 7 }}
                   >
-                    <path d="M2 7 Q40 1 78 7" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
+                    <path d="M2 7 Q150 1 298 7" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
                   </svg>
                 </span>
               </span>
@@ -134,8 +133,8 @@ export default function HeroSection() {
 
             {/* Sub-headline */}
             <p className="mb-8 text-lg leading-relaxed text-secondary-200 md:text-xl max-w-lg">
-              Fully insured, DBS-checked cleaners who deliver spotless results every single time.
-              Transparent pricing, no hidden fees, satisfaction guaranteed.
+              Bolton&apos;s most trusted domestic cleaning service. Covering Manchester, Bury, Wigan and
+              Preston. Fully insured, DBS-checked cleaners — transparent pricing from £59, satisfaction guaranteed.
             </p>
 
             {/* Badge grid */}
@@ -185,8 +184,8 @@ export default function HeroSection() {
               {/* Card header */}
               <div className="bg-gradient-to-r from-primary-600 to-primary-500 px-7 py-6">
                 <p className="mb-0.5 text-xs font-semibold uppercase tracking-widest text-primary-100">Free Estimate</p>
-                <h2 className="font-heading text-2xl font-bold text-white">Get an Instant Quote</h2>
-                <p className="mt-1 text-sm text-primary-100">Answer 3 questions — done in 60 seconds</p>
+                <h2 className="font-heading text-2xl font-bold text-white">Get Your Instant Quote</h2>
+                <p className="mt-1 text-sm text-primary-100">See your exact price in 60 seconds — no obligation</p>
               </div>
 
               {/* Form body */}
@@ -223,7 +222,7 @@ export default function HeroSection() {
                     type="text"
                     value={postcode}
                     onChange={(e) => setPostcode(e.target.value.toUpperCase())}
-                    placeholder="e.g. SW1A 1AA"
+                    placeholder="e.g. BL1 1AA"
                     maxLength={8}
                     className="h-12 w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 text-sm font-medium text-secondary-700 placeholder:text-secondary-300 transition-all hover:bg-white focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-400"
                   />

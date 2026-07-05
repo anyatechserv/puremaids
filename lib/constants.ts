@@ -1,9 +1,15 @@
 export const SITE_CONFIG = {
   name: 'PureMaids',
-  tagline: 'Professional Cleaning Services',
+  tagline: 'Professional Cleaning Services Bolton & Greater Manchester',
   phone: '0800 012 3456',
   email: 'hello@puremaids.co.uk',
-  address: 'London, United Kingdom',
+  address: 'Bolton, Greater Manchester, United Kingdom',
+  addressStreet: '12 Deansgate',
+  addressLocality: 'Bolton',
+  addressRegion: 'Greater Manchester',
+  addressPostcode: 'BL1 1DE',
+  latitude: '53.5779',
+  longitude: '-2.4282',
   domain: 'puremaids.co.uk',
   social: {
     facebook: 'https://facebook.com/puremaids',
@@ -16,40 +22,40 @@ export const SERVICES = [
   {
     slug: 'domestic-cleaning',
     name: 'Domestic Cleaning',
-    shortDesc: 'Regular home cleaning tailored to your schedule',
+    shortDesc: 'Regular home cleaning in Bolton and across Greater Manchester',
     icon: 'Home',
     color: '#00AEEF',
   },
   {
     slug: 'deep-cleaning',
     name: 'Deep Cleaning',
-    shortDesc: 'Thorough top-to-bottom clean of your entire home',
+    shortDesc: 'Thorough top-to-bottom deep clean for homes across the North West',
     icon: 'Sparkles',
     color: '#10B981',
   },
   {
     slug: 'end-of-tenancy-cleaning',
     name: 'End of Tenancy Cleaning',
-    shortDesc: 'Guaranteed clean to get your full deposit back',
+    shortDesc: 'Deposit-back guaranteed end of tenancy cleans across Bolton & Manchester',
     icon: 'Key',
     color: '#F59E0B',
   },
   {
     slug: 'office-cleaning',
     name: 'Office Cleaning',
-    shortDesc: 'Professional commercial cleaning for your workplace',
+    shortDesc: 'Professional commercial cleaning for Bolton and Manchester businesses',
     icon: 'Building2',
     color: '#8B5CF6',
   },
 ];
 
 export const AREAS = [
-  'Central London', 'North London', 'South London', 'East London', 'West London',
-  'Canary Wharf', 'Chelsea', 'Kensington', 'Fulham', 'Battersea',
-  'Clapham', 'Brixton', 'Hackney', 'Islington', 'Camden',
-  'Hammersmith', 'Wimbledon', 'Richmond', 'Kingston', 'Croydon',
-  'Ealing', 'Harrow', 'Barnet', 'Wembley', 'Stratford',
-  'Greenwich', 'Lewisham', 'Dulwich', 'Crystal Palace', 'Tooting',
+  'Bolton', 'Manchester', 'Bury', 'Wigan', 'Preston',
+  'Salford', 'Chorley', 'Leigh', 'Horwich', 'Farnworth',
+  'Radcliffe', 'Ramsbottom', 'Heywood', 'Middleton', 'Rochdale',
+  'Oldham', 'Stockport', 'Warrington', 'Blackburn', 'Burnley',
+  'Accrington', 'Darwen', 'Skelmersdale', 'Atherton', 'Walkden',
+  'Little Lever', 'Kearsley', 'Westhoughton', 'Tyldesley', 'Eccles',
 ];
 
 export const PRICING = {
@@ -76,7 +82,7 @@ export const PRICING = {
   },
   office: {
     small: { price: 9900, label: 'Small (up to 500 sq ft)' },
-    medium: { price: 17900, label: 'Medium (500–1500 sq ft)' },
-    large: { price: 29900, label: 'Large (1500+ sq ft)' },
+    medium: { price: 17900, label: 'Medium (500–1,500 sq ft)' },
+    large: { price: 29900, label: 'Large (1,500+ sq ft)' },
   },
 };

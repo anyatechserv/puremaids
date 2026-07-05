@@ -7,8 +7,12 @@ import { cn } from '@/lib/utils';
 
 const faqs = [
   {
-    q: 'How quickly can you arrange a cleaner?',
-    a: 'For most areas we can arrange a cleaner within 24–48 hours. In many cases same-day appointments are available — just call us and we\'ll do our best to accommodate you.',
+    q: 'Do you offer house cleaning in Bolton?',
+    a: 'Yes — PureMaids is based in Bolton and covers the whole of Bolton borough including Farnworth, Horwich, Westhoughton, Little Lever and Kearsley. We can usually arrange a cleaner within 24–48 hours.',
+  },
+  {
+    q: 'Which areas of Greater Manchester do you cover?',
+    a: 'We cover Manchester city, Salford, Bury, Radcliffe, Ramsbottom, Wigan, Leigh, Atherton, Preston, Chorley and many more North West towns. If you\'re unsure, enter your postcode on our booking page for an instant check.',
   },
   {
     q: 'Do your cleaners bring their own products and equipment?',
@@ -16,19 +20,15 @@ const faqs = [
   },
   {
     q: 'Are your cleaners insured and DBS checked?',
-    a: 'Absolutely. Every PureMaids cleaner undergoes a full DBS background check before their first assignment and is covered by our £5 million public liability insurance.',
+    a: 'Absolutely. Every PureMaids cleaner undergoes a full DBS background check before their first assignment and is covered by our £5 million public liability insurance policy.',
   },
   {
     q: 'Will I get the same cleaner each time?',
-    a: 'For regular domestic cleaning, yes. We match you with a dedicated cleaner who learns your home and preferences. In the rare event of illness or holiday, we always notify you in advance.',
-  },
-  {
-    q: 'What is your cancellation policy?',
-    a: 'You can cancel or reschedule with at least 24 hours\' notice at no charge. Late cancellations (under 24 hours) may incur a small £25 admin fee.',
+    a: 'For regular domestic cleaning, yes. We match you with a dedicated cleaner who learns your home and preferences. In the rare event of illness or holiday, we always notify you in advance and send a vetted replacement.',
   },
   {
     q: 'Do you offer a satisfaction guarantee?',
-    a: 'Yes, 100%. If you\'re not satisfied, notify us within 24 hours and we\'ll return to put it right at no extra cost. Your satisfaction is our priority.',
+    a: 'Yes, 100%. If you\'re not satisfied with any aspect of your clean, notify us within 24 hours and we\'ll return to put it right at no extra cost. Your satisfaction is our only measure of success.',
   },
 ];
 
@@ -44,10 +44,10 @@ export default function FaqSection() {
             FAQ
           </span>
           <h2 className="font-heading text-4xl font-extrabold leading-tight text-secondary-800 md:text-5xl mb-4">
-            Common Questions
+            Common Questions About<br />Our Cleaning Services
           </h2>
           <p className="mx-auto max-w-md text-base leading-relaxed text-secondary-500">
-            Everything you need to know before booking. Can&apos;t find your answer? We&apos;re one call away.
+            Everything you need to know about house cleaning in Bolton and Greater Manchester. Can&apos;t find your answer? Call us on 0800 012 3456.
           </p>
         </div>
 

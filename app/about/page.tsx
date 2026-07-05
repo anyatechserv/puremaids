@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: 'About PureMaids | London\'s Trusted Cleaning Company',
+  title: 'About PureMaids | Bolton & Greater Manchester Cleaning Company',
   description:
-    'Learn about PureMaids — London\'s trusted professional cleaning company. Our story, values, and the team behind every spotless home.',
+    'Learn about PureMaids — Bolton\'s trusted professional cleaning company serving Greater Manchester. Our story, our values, and the local team behind every spotless home.',
+  alternates: { canonical: 'https://puremaids.co.uk/about' },
 };
 
 const values = [
@@ -38,7 +39,7 @@ const team = [
     name: 'Sophie Clarke',
     role: 'Founder & CEO',
     image: 'https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg',
-    bio: 'Former hospitality manager with 15 years experience. Founded PureMaids in 2015 with a mission to raise the bar in domestic cleaning.',
+    bio: 'Former hospitality manager with 15 years experience. Founded PureMaids in Bolton in 2015 with a mission to raise the bar in domestic cleaning across the North West.',
   },
   {
     name: 'James Okafor',
@@ -65,7 +66,7 @@ export default function AboutPage() {
               About PureMaids
             </h1>
             <p className="text-secondary-200 text-lg leading-relaxed">
-              We started PureMaids in 2015 with a simple idea: London deserves a cleaning company 
+              We started PureMaids in Bolton with a simple idea: the North West deserves a cleaning company 
               that genuinely cares about quality, reliability, and people. Eight years and 10,000+ 
               customers later, that mission hasn&apos;t changed.
             </p>
@@ -84,15 +85,15 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-4 text-secondary-600 leading-relaxed">
                 <p>
-                  PureMaids was founded in Chelsea in 2015 by Sophie Clarke, a former hospitality 
-                  manager who was frustrated by the inconsistency of cleaning services available in London. 
+                  PureMaids was founded in Bolton in 2015 by Sophie Clarke, a former hospitality
+                  manager who was frustrated by the inconsistency of cleaning services available across Greater Manchester. 
                   She wanted a service she could trust — one that sent the same cleaner every time, 
                   communicated clearly, and stood behind its work.
                 </p>
                 <p>
-                  What started as a small team of five cleaners serving Chelsea and Kensington has grown 
-                  into one of London&apos;s most trusted cleaning companies, with over 200 vetted professionals 
-                  serving customers across 30+ London areas.
+                  What started as a small team of five cleaners serving Bolton and Horwich has grown
+                  into one of Greater Manchester&apos;s most trusted cleaning companies, with over 200 vetted professionals
+                  serving customers across 30+ North West towns.
                 </p>
                 <p>
                   Our growth has always been driven by word of mouth — customers who love our service 
@@ -108,7 +109,7 @@ export default function AboutPage() {
               />
               <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl p-5 shadow-medium">
                 <div className="font-heading font-bold text-3xl text-primary-500">8+</div>
-                <div className="text-secondary-600 text-sm">Years in London</div>
+                <div className="text-secondary-600 text-sm">Years in Bolton</div>
               </div>
               <div className="absolute -top-5 -right-5 bg-primary-500 rounded-2xl p-5 shadow-medium">
                 <div className="font-heading font-bold text-3xl text-white">10K+</div>

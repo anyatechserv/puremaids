@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   Sparkles,
+  Smartphone,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminProvider, useAdmin } from '@/lib/admin-auth';
@@ -28,6 +29,7 @@ const NAV = [
   { href: '/admin/cleaners',  label: 'Cleaners',    icon: UserCheck       },
   { href: '/admin/revenue',   label: 'Revenue',     icon: BarChart3       },
   { href: '/admin/invoices',  label: 'Invoices',    icon: FileText        },
+  { href: '/staff',           label: 'Staff App ↗', icon: Smartphone      },
 ];
 
 function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {

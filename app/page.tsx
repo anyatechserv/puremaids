@@ -11,9 +11,15 @@ import FaqSection from '@/components/home/faq-section';
 import CtaBannerSection from '@/components/home/cta-banner-section';
 
 export const metadata: Metadata = {
-  title: 'PureMaids | Professional House Cleaning Across the UK',
+  title: 'House Cleaning Bolton & Greater Manchester | From £59 | PureMaids',
   description:
-    'Professional house cleaning services across the UK. Fully insured, DBS-checked cleaners. Domestic, deep, end of tenancy and office cleaning. Get a free instant quote today.',
+    'Professional house cleaning in Bolton, Manchester, Bury, Wigan and Preston. Fully insured, DBS-checked cleaners from £59. Domestic, deep, end of tenancy and office cleaning. Instant online quote — book today.',
+  alternates: { canonical: 'https://puremaids.co.uk' },
+  openGraph: {
+    title: 'House Cleaning Bolton & Greater Manchester | From £59 | PureMaids',
+    description:
+      'Professional house cleaning in Bolton, Manchester, Bury, Wigan and Preston. Fully insured, DBS-checked cleaners from £59. Book online for an instant quote.',
+  },
 };
 
 export default function HomePage() {
