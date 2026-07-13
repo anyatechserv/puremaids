@@ -3,54 +3,30 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-type Consent = { analytics: boolean; marketing: boolean; savedAt: string };
+const KEY = 'puremaids_gdpr';
+type Prefs = { necessary: true; analytics: boolean; marketing: boolean; ts: string };
 
-const COOKIE_KEY = 'puremaids_consent';
-
-function getStoredConsent(): Consent | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem(COOKIE_KEY);
-    return raw ? (JSON.parse(raw) as Consent) : null;
-  } catch {
-    return null;
-  }
+function getPrefs(): Prefs | null {
+  try { return JSON.parse(localStorage.getItem(KEY) ?? 'null') as Prefs | null; }
+  catch { return null; }
 }
-
-function saveConsent(consent: Omit<Consent, 'savedAt'>) {
-  const full: Consent = { ...consent, savedAt: new Date().toISOString() };
-  localStorage.setItem(COOKIE_KEY, JSON.stringify(full));
-  // Dispatch event so the rest of the app can react
-  window.dispatchEvent(new CustomEvent('consentUpdated', { detail: full }));
+function savePrefs(p: Omit<Prefs, 'necessary' | 'ts'>) {
+  const full: Prefs = { necessary: true, ...p, ts: new Date().toISOString() };
+  localStorage.setItem(KEY, JSON.stringify(full));
+  window.dispatchEvent(new CustomEvent('gdpr:consent', { detail: full }));
 }
 
 export default function CookieBanner() {
-  const [visible, setVisible] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [analytics, setAnalytics] = useState(true);
-  const [marketing, setMarketing] = useState(false);
+  const [show, setShow]       = useState(false);
+  const [detail, setDetail]   = useState(false);
+  const [analytics, setAna]   = useState(true);
+  const [marketing, setMkt]   = useState(false);
 
-  useEffect(() => {
-    const stored = getStoredConsent();
-    if (!stored) setVisible(true);
-  }, []);
+  useEffect(() => { if (!getPrefs()) setShow(true); }, []);
 
-  if (!visible) return null;
+  if (!show) return null;
 
-  function acceptAll() {
-    saveConsent({ analytics: true, marketing: true });
-    setVisible(false);
-  }
-
-  function acceptNecessary() {
-    saveConsent({ analytics: false, marketing: false });
-    setVisible(false);
-  }
-
-  function saveCustom() {
-    saveConsent({ analytics, marketing });
-    setVisible(false);
-  }
+  const accept = (a: boolean, m: boolean) => { savePrefs({ analytics: a, marketing: m }); setShow(false); };
 
   return (
     <div
@@ -58,76 +34,57 @@ export default function CookieBanner() {
       aria-modal="false"
       aria-label="Cookie consent"
       aria-live="polite"
-      className="fixed inset-x-4 bottom-4 z-[90] sm:inset-x-auto sm:bottom-6 sm:left-6 sm:max-w-md animate-slide-up"
+      className="fixed inset-x-4 bottom-4 z-[90] sm:inset-x-auto sm:bottom-6 sm:left-6 sm:max-w-sm animate-slide-up"
     >
-      <div className="card p-6 shadow-xl">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-base font-semibold text-gray-900">We use cookies</h2>
-            <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">
-              We use essential cookies to make our site work. With your consent, we also use analytics cookies to improve your experience.{' '}
-              <Link href="/cookies" className="text-brand-600 underline hover:text-brand-700">Learn more</Link>
-            </p>
-          </div>
-        </div>
+      <div className="card shadow-xl p-5">
+        <p className="text-sm font-semibold text-gray-900">We use cookies 🍪</p>
+        <p className="mt-1 text-xs text-gray-600 leading-relaxed">
+          We use essential cookies to make our site work, and optional analytics cookies to improve your experience.{' '}
+          <Link href="/cookies" className="text-brand-600 underline">Learn more</Link>
+        </p>
 
-        {showDetails && (
-          <div className="mt-4 space-y-3 rounded-xl bg-gray-50 p-4">
-            <label className="flex items-center justify-between gap-3">
+        {detail && (
+          <div className="mt-3 space-y-2 rounded-xl bg-gray-50 p-3 text-xs">
+            <div className="flex items-center justify-between gap-3">
               <div>
-                <span className="text-sm font-medium text-gray-900">Necessary</span>
-                <p className="text-xs text-gray-500">Required for the site to function.</p>
+                <p className="font-medium text-gray-800">Necessary</p>
+                <p className="text-gray-500">Required for core functionality.</p>
               </div>
-              <div className="relative h-5 w-9 rounded-full bg-brand-600 opacity-50 cursor-not-allowed" aria-label="Always on" />
-            </label>
-            <label className="flex items-center justify-between gap-3 cursor-pointer">
-              <div>
-                <span className="text-sm font-medium text-gray-900">Analytics</span>
-                <p className="text-xs text-gray-500">Helps us understand how visitors use our site.</p>
+              <span className="text-brand-600 font-semibold">Always on</span>
+            </div>
+            {([
+              { key: 'analytics', label: 'Analytics',  desc: 'Helps us improve the site.',          val: analytics, set: setAna },
+              { key: 'marketing', label: 'Marketing',   desc: 'Personalised promotions.',            val: marketing, set: setMkt },
+            ] as const).map(({ key, label, desc, val, set }) => (
+              <div key={key} className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-medium text-gray-800">{label}</p>
+                  <p className="text-gray-500">{desc}</p>
+                </div>
+                <button
+                  role="switch"
+                  aria-checked={val}
+                  aria-label={`Toggle ${label} cookies`}
+                  onClick={() => (set as React.Dispatch<React.SetStateAction<boolean>>)(!val)}
+                  className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${val ? 'bg-brand-600' : 'bg-gray-300'}`}
+                >
+                  <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${val ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                </button>
               </div>
-              <button
-                role="switch"
-                aria-checked={analytics}
-                onClick={() => setAnalytics(!analytics)}
-                className={`relative h-5 w-9 rounded-full transition-colors ${analytics ? 'bg-brand-600' : 'bg-gray-300'}`}
-              >
-                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${analytics ? 'translate-x-4' : 'translate-x-0.5'}`} />
-              </button>
-            </label>
-            <label className="flex items-center justify-between gap-3 cursor-pointer">
-              <div>
-                <span className="text-sm font-medium text-gray-900">Marketing</span>
-                <p className="text-xs text-gray-500">Personalised ads and promotions.</p>
-              </div>
-              <button
-                role="switch"
-                aria-checked={marketing}
-                onClick={() => setMarketing(!marketing)}
-                className={`relative h-5 w-9 rounded-full transition-colors ${marketing ? 'bg-brand-600' : 'bg-gray-300'}`}
-              >
-                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${marketing ? 'translate-x-4' : 'translate-x-0.5'}`} />
-              </button>
-            </label>
+            ))}
           </div>
         )}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button onClick={acceptAll} className="btn btn-sm btn-primary flex-1">
-            Accept all
-          </button>
-          {showDetails ? (
-            <button onClick={saveCustom} className="btn btn-sm btn-secondary flex-1">
-              Save preferences
-            </button>
-          ) : (
-            <button onClick={() => setShowDetails(true)} className="btn btn-sm btn-secondary flex-1">
-              Manage cookies
-            </button>
-          )}
-          <button onClick={acceptNecessary} className="btn btn-sm btn-ghost w-full text-xs text-gray-500">
-            Necessary only
-          </button>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button onClick={() => accept(true, true)}   className="btn btn-sm btn-primary flex-1">Accept all</button>
+          {detail
+            ? <button onClick={() => accept(analytics, marketing)} className="btn btn-sm btn-secondary flex-1">Save</button>
+            : <button onClick={() => setDetail(true)}              className="btn btn-sm btn-secondary flex-1">Manage</button>
+          }
         </div>
+        <button onClick={() => accept(false, false)} className="btn btn-sm btn-ghost mt-1 w-full text-xs text-gray-400">
+          Necessary only
+        </button>
       </div>
     </div>
   );
