@@ -1,34 +1,28 @@
-import { DEPOSIT_PERCENTAGE, SERVICE_PRICES_PENCE, EXTRA_PRICES_PENCE } from './constants';
+import { SERVICES, EXTRAS, DEPOSIT_PERCENTAGE } from './constants';
 
 export interface PriceBreakdown {
-  basePricePence: number;
-  extrasPricePence: number;
-  totalPricePence: number;
+  basePence: number;
+  extrasPence: number;
+  totalPence: number;
   depositPence: number;
   balancePence: number;
 }
 
-export function calculatePrice(
-  serviceType: string,
-  extras: string[] = [],
-): PriceBreakdown {
-  const service = SERVICE_PRICES_PENCE[serviceType];
-  const basePricePence = service?.base ?? 5900;
-
-  const extrasPricePence = extras.reduce((sum, key) => {
-    return sum + (EXTRA_PRICES_PENCE[key] ?? 0);
-  }, 0);
-
-  const totalPricePence = basePricePence + extrasPricePence;
-  const depositPence = Math.round(totalPricePence * (DEPOSIT_PERCENTAGE / 100));
-  const balancePence = totalPricePence - depositPence;
-
-  return { basePricePence, extrasPricePence, totalPricePence, depositPence, balancePence };
+export function calcPrice(serviceKey: string, extraKeys: string[] = []): PriceBreakdown {
+  const svc = SERVICES[serviceKey as keyof typeof SERVICES];
+  const basePence = svc?.basePence ?? 5900;
+  const extrasPence = extraKeys.reduce(
+    (sum, k) => sum + (EXTRAS[k as keyof typeof EXTRAS]?.pence ?? 0), 0,
+  );
+  const totalPence = basePence + extrasPence;
+  const depositPence = Math.round(totalPence * DEPOSIT_PERCENTAGE / 100);
+  return { basePence, extrasPence, totalPence, depositPence, balancePence: totalPence - depositPence };
 }
 
 export function formatGBP(pence: number): string {
-  return new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: 'GBP',
-  }).format(pence / 100);
+  return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100);
+}
+
+export function formatDate(iso: string): string {
+  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
 }

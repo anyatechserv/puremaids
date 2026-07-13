@@ -1,83 +1,62 @@
-import { supabase } from './supabase-client';
-import type { CheckoutRequest, SubscriptionCheckoutRequest } from './types/stripe';
+const BASE = () => `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1`;
+const ANON = () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
-const EDGE_FUNCTION_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1`;
-
-export async function createBookingCheckoutSession(
-  req: CheckoutRequest,
-): Promise<{ url: string } | null> {
-  const response = await fetch(`${EDGE_FUNCTION_URL}/create-checkout`, {
+export async function createBookingCheckout(params: {
+  bookingId: string;
+  bookingReference: string;
+  serviceType: string;
+  serviceLabel: string;
+  totalPricePence: number;
+  depositPence: number;
+  customerEmail: string;
+  customerName: string;
+  paymentType: 'deposit' | 'full';
+}): Promise<string> {
+  const res = await fetch(`${BASE()}/create-checkout`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-    },
-    body: JSON.stringify(req),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ANON()}` },
+    body: JSON.stringify(params),
   });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error ?? `Checkout failed (${response.status})`);
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error ?? `Checkout error ${res.status}`);
   }
-
-  const data = await response.json();
-  return { url: data.url };
+  const d = await res.json();
+  return d.url;
 }
 
-export async function createSubscriptionCheckoutSession(
-  req: SubscriptionCheckoutRequest,
-): Promise<{ url: string } | null> {
-  const response = await fetch(`${EDGE_FUNCTION_URL}/create-checkout`, {
+export async function createSubscriptionCheckout(params: {
+  planId: string;
+  priceId: string;
+  planName: string;
+  customerEmail: string;
+  customerName: string;
+}): Promise<string> {
+  const res = await fetch(`${BASE()}/create-checkout`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-    },
-    body: JSON.stringify({ ...req, mode: 'subscription' }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ANON()}` },
+    body: JSON.stringify({ ...params, mode: 'subscription' }),
   });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error ?? `Subscription checkout failed (${response.status})`);
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error ?? `Subscription checkout error ${res.status}`);
   }
-
-  const data = await response.json();
-  return { url: data.url };
+  const d = await res.json();
+  return d.url;
 }
 
-export async function redirectToCheckout(url: string): Promise<void> {
-  window.location.href = url;
-}
-
-export async function processRefund(params: {
-  paymentId: string;
-  amountPence?: number;
-  reason?: string;
-  mode?: 'full' | 'partial';
-}): Promise<{ refundId: string; amountRefundedPence: number; status: string }> {
-  const { data: session } = await supabase.auth.getSession();
-  const token = session.session?.access_token;
-
-  if (!token) throw new Error('Not authenticated');
-
-  const response = await fetch(`${EDGE_FUNCTION_URL}/process-refund`, {
+export async function requestRefund(
+  accessToken: string,
+  params: { paymentId: string; amountPence?: number; reason?: string; mode?: 'full' | 'partial' },
+): Promise<{ refundId: string; amountRefundedPence: number; status: string }> {
+  const res = await fetch(`${BASE()}/process-refund`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      paymentId: params.paymentId,
-      amountPence: params.amountPence,
-      reason: params.reason,
-      mode: params.mode ?? 'full',
-    }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+    body: JSON.stringify({ ...params, mode: params.mode ?? 'full' }),
   });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error ?? `Refund failed (${response.status})`);
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error ?? `Refund error ${res.status}`);
   }
-
-  return response.json();
+  return res.json();
 }

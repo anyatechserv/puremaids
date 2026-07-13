@@ -1,36 +1,59 @@
-import type { Metadata } from 'next';
+import Nav from '@/components/layout/Nav';
+import Footer from '@/components/layout/Footer';
 
-export const metadata: Metadata = {
-  title: 'Cookie Policy | PureMaids',
-  description: 'PureMaids cookie policy. Learn how we use cookies on our website.',
-};
+export const metadata = { title: 'Cookie Policy', description: 'How PureMaids uses cookies and how to manage your preferences.' };
 
 export default function CookiesPage() {
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <h1 className="font-heading font-bold text-3xl text-secondary-800 mb-3">Cookie Policy</h1>
-        <p className="text-secondary-400 text-sm mb-8">Last updated: 1 January 2024</p>
-        <div className="space-y-6 text-secondary-600 leading-relaxed text-sm">
-          <section>
-            <h2 className="font-heading font-semibold text-secondary-800 text-xl mb-2">What Are Cookies?</h2>
-            <p>Cookies are small text files placed on your device when you visit a website. They are widely used to make websites work more efficiently and to provide information to the website owner.</p>
-          </section>
-          <section>
-            <h2 className="font-heading font-semibold text-secondary-800 text-xl mb-2">How We Use Cookies</h2>
-            <p>PureMaids uses the following types of cookies:</p>
-            <ul className="list-disc pl-5 space-y-1 mt-2">
-              <li><strong>Strictly Necessary:</strong> Required for the website to function correctly.</li>
-              <li><strong>Analytics:</strong> Help us understand how visitors use our site so we can improve it.</li>
-              <li><strong>Marketing:</strong> Used to deliver relevant advertisements.</li>
-            </ul>
-          </section>
-          <section>
-            <h2 className="font-heading font-semibold text-secondary-800 text-xl mb-2">Managing Cookies</h2>
-            <p>You can control and delete cookies through your browser settings. Disabling cookies may affect the functionality of our website.</p>
-          </section>
+    <>
+      <Nav />
+      <main id="main-content" className="min-h-screen bg-white pt-20">
+        <div className="container max-w-3xl py-12">
+          <h1 className="font-display text-3xl font-bold text-gray-900">Cookie Policy</h1>
+          <p className="mt-2 text-sm text-gray-500">Last updated: January 2026</p>
+          <div className="mt-8 prose prose-sm max-w-none text-gray-700 space-y-6">
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">What are cookies?</h2>
+              <p>Cookies are small text files stored on your device when you visit a website. They help us provide you with a better experience.</p>
+            </section>
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">Cookies we use</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="border border-gray-200 px-4 py-2 text-left">Cookie</th>
+                      <th className="border border-gray-200 px-4 py-2 text-left">Type</th>
+                      <th className="border border-gray-200 px-4 py-2 text-left">Purpose</th>
+                      <th className="border border-gray-200 px-4 py-2 text-left">Expiry</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'puremaids_consent', type: 'Necessary', purpose: 'Stores your cookie consent preferences', expiry: '1 year' },
+                      { name: 'sb-auth-token', type: 'Necessary', purpose: 'Authentication session (Supabase)', expiry: 'Session' },
+                      { name: '_ga', type: 'Analytics', purpose: 'Google Analytics visitor tracking', expiry: '2 years' },
+                      { name: '_gid', type: 'Analytics', purpose: 'Google Analytics session tracking', expiry: '24 hours' },
+                    ].map(c => (
+                      <tr key={c.name}>
+                        <td className="border border-gray-200 px-4 py-2 font-mono text-xs">{c.name}</td>
+                        <td className="border border-gray-200 px-4 py-2">{c.type}</td>
+                        <td className="border border-gray-200 px-4 py-2">{c.purpose}</td>
+                        <td className="border border-gray-200 px-4 py-2">{c.expiry}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">Managing cookies</h2>
+              <p>You can change your cookie preferences at any time using the cookie banner (which reappears if you clear your browser data), or by clearing cookies in your browser settings.</p>
+            </section>
+          </div>
         </div>
-      </div>
-    </section>
+      </main>
+      <Footer />
+    </>
   );
 }

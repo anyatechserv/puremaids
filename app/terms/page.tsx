@@ -1,34 +1,43 @@
-import type { Metadata } from 'next';
-import { SITE_CONFIG } from '@/lib/constants';
+import Nav from '@/components/layout/Nav';
+import Footer from '@/components/layout/Footer';
+import { BUSINESS } from '@/lib/constants';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | PureMaids',
-  description: 'PureMaids terms of service and conditions for our professional cleaning services.',
-};
+export const metadata = { title: 'Terms & Conditions' };
 
 export default function TermsPage() {
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <h1 className="font-heading font-bold text-3xl text-secondary-800 mb-3">Terms of Service</h1>
-        <p className="text-secondary-400 text-sm mb-8">Last updated: 1 January 2024</p>
-        <div className="space-y-6 text-secondary-600 leading-relaxed text-sm">
-          {[
-            { title: '1. Agreement', content: 'By booking a service with PureMaids Ltd, you agree to be bound by these Terms of Service.' },
-            { title: '2. Services', content: 'PureMaids provides professional cleaning services as described on our website. We reserve the right to refuse service to anyone.' },
-            { title: '3. Booking & Payment', content: 'Bookings are confirmed upon receipt of deposit or full payment. Prices are inclusive of VAT and are fixed at the time of booking.' },
-            { title: '4. Cancellation Policy', content: 'Cancellations must be made at least 24 hours before the scheduled clean. Late cancellations may incur a £25 fee.' },
-            { title: '5. Satisfaction Guarantee', content: 'If you are not satisfied with the quality of our clean, please notify us within 24 hours and we will arrange a free re-clean.' },
-            { title: '6. Liability', content: 'Our liability is limited to the value of the clean in question. We carry public liability insurance up to £5 million.' },
-            { title: '7. Governing Law', content: 'These terms are governed by the laws of England and Wales.' },
-          ].map(({ title, content }) => (
-            <section key={title}>
-              <h2 className="font-heading font-semibold text-secondary-800 text-xl mb-2">{title}</h2>
-              <p>{content}</p>
+    <>
+      <Nav />
+      <main id="main-content" className="min-h-screen bg-white pt-20">
+        <div className="container max-w-3xl py-12">
+          <h1 className="font-display text-3xl font-bold text-gray-900">Terms & Conditions</h1>
+          <p className="mt-2 text-sm text-gray-500">Last updated: January 2026</p>
+          <div className="mt-8 prose prose-sm max-w-none text-gray-700 space-y-6">
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">1. Booking and payment</h2>
+              <p>A 20% non-refundable deposit is required to confirm your booking. The remaining balance is due on completion of the service.</p>
+              <p>All prices are quoted inclusive of VAT where applicable. Payments are processed securely by Stripe.</p>
             </section>
-          ))}
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">2. Cancellation policy</h2>
+              <p>Cancellations made more than 48 hours before the scheduled service will receive a full refund of the balance (deposit is non-refundable). Cancellations within 48 hours may incur a cancellation fee of up to 50% of the service value.</p>
+            </section>
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">3. Satisfaction guarantee</h2>
+              <p>If you are not satisfied with our service, please contact us within 24 hours of your clean. We will arrange a return visit at no additional cost to rectify any issues.</p>
+            </section>
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">4. Liability</h2>
+              <p>We carry comprehensive public liability insurance. Any claims for damage must be reported within 24 hours of the service. We are not liable for pre-existing damage or items of exceptional value unless previously declared.</p>
+            </section>
+            <section>
+              <h2 className="text-xl font-bold text-gray-900">5. Contact</h2>
+              <p>For queries: <a href={`mailto:${BUSINESS.email}`} className="text-brand-600 underline">{BUSINESS.email}</a> or call {BUSINESS.phone}.</p>
+            </section>
+          </div>
         </div>
-      </div>
-    </section>
+      </main>
+      <Footer />
+    </>
   );
 }

@@ -1,0 +1,14 @@
+{
+  "name": "PureMaids",
+  "short_name": "PureMaids",
+  "description": "Professional cleaning services in Bolton & Greater Manchester",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1b7c6d",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
