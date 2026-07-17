@@ -1,41 +1,30 @@
-const base = () => `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1`;
-const anon  = () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+const BASE = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-async function post(path: string, body: unknown, token?: string) {
-  const res = await fetch(`${base()}${path}`, {
+if (!BASE || !KEY) throw new Error('Missing Supabase env vars');
+
+export async function createCheckoutSession(data: Record<string, unknown>): Promise<{ url: string; sessionId: string }> {
+  const res = await fetch(`${BASE}/functions/v1/create-checkout`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token ?? anon()}`,
-    },
-    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
+    body: JSON.stringify(data),
   });
   if (!res.ok) {
-    const e = await res.json().catch(() => ({})) as { error?: string };
-    throw new Error(e.error ?? `Request failed (${res.status})`);
+    const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(err.error || 'Checkout failed');
   }
   return res.json();
 }
 
-export async function createBookingCheckout(p: {
-  bookingId: string; bookingReference: string; serviceType: string; serviceLabel: string;
-  totalPricePence: number; depositPence: number; customerEmail: string; customerName: string;
-  paymentType: 'deposit' | 'full';
-}): Promise<string> {
-  const d = await post('/create-checkout', p);
-  return d.url as string;
-}
-
-export async function createSubscriptionCheckout(p: {
-  planId: string; priceId: string; planName: string; customerEmail: string; customerName: string;
-}): Promise<string> {
-  const d = await post('/create-checkout', { ...p, mode: 'subscription' });
-  return d.url as string;
-}
-
-export async function requestRefund(
-  accessToken: string,
-  p: { paymentId: string; amountPence?: number; reason?: string; mode?: 'full' | 'partial' },
-) {
-  return post('/process-refund', { ...p, mode: p.mode ?? 'full' }, accessToken);
+export async function processRefund(data: Record<string, unknown>, accessToken: string): Promise<{ refundId: string; amountRefundedPence: number; status: string }> {
+  const res = await fetch(`${BASE}/functions/v1/process-refund`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(err.error || 'Refund failed');
+  }
+  return res.json();
 }

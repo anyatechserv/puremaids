@@ -1,128 +1,84 @@
 'use client';
 
-import { useState } from 'react';
-import Nav from '@/components/layout/Nav';
-import Footer from '@/components/layout/Footer';
-import Spinner from '@/components/ui/Spinner';
-import { SUBSCRIPTION_PLANS } from '@/lib/subscription-plans';
-import { fmt } from '@/lib/pricing';
-import { supabase } from '@/lib/supabase-client';
-import { createSubscriptionCheckout } from '@/lib/stripe-api';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getSupabaseBrowserClient } from '@/lib/supabase-client';
+import { createCheckoutSession } from '@/lib/stripe-api';
 
-export const dynamic = 'force-dynamic';
-
-function Check() {
-  return (
-    <svg className="h-5 w-5 shrink-0 text-brand-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-    </svg>
-  );
+interface Plan {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  monthly_price_pence: number;
+  visits_per_month: number;
+  hours_per_visit: number;
+  features: string[];
+  is_active: boolean;
+  stripe_price_id: string;
 }
 
 export default function SubscriptionsPage() {
-  const [loading, setLoading] = useState<string | null>(null);
-  const [error,   setError]   = useState<string | null>(null);
+  const router = useRouter();
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [redirecting, setRedirecting] = useState<string | null>(null);
 
-  async function subscribe(plan: (typeof SUBSCRIPTION_PLANS)[number]) {
-    setLoading(plan.id);
-    setError(null);
+  useEffect(() => {
+    async function load() {
+      const supabase = getSupabaseBrowserClient();
+      const { data } = await supabase.from('subscription_plans').select('*').eq('is_active', true).order('sort_order');
+      setPlans((data || []).map((p: any) => ({ ...p, features: Array.isArray(p.features) ? p.features : [] })));
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  async function handleSubscribe(plan: Plan) {
+    setRedirecting(plan.id);
     try {
+      const supabase = getSupabaseBrowserClient();
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setError('Please sign in to subscribe.'); setLoading(null); return; }
-      const url = await createSubscriptionCheckout({
-        planId: plan.id, priceId: plan.priceId, planName: plan.name,
-        customerEmail: user.email ?? '', customerName: user.email ?? '',
+      if (!user) { router.push('/login?redirect=/subscriptions'); return; }
+      const session = await createCheckoutSession({
+        mode: 'subscription',
+        planId: plan.slug,
+        priceId: plan.stripe_price_id,
+        planName: plan.name,
+        customerEmail: user.email || '',
+        customerName: user.user_metadata?.full_name || '',
       });
-      window.location.href = url;
+      router.push(session.url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Subscription failed');
-      setLoading(null);
+      setRedirecting(null);
+      alert(err instanceof Error ? err.message : 'Failed to start checkout');
     }
   }
 
+  if (loading) return <div className="section py-20 text-center text-gray-500">Loading plans...</div>;
+
   return (
-    <>
-      <Nav />
-      <main id="main-content">
-        <section className="bg-gradient-to-b from-brand-50 to-white pb-4 pt-32" aria-labelledby="plans-heading">
-          <div className="container text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Save up to 10%</p>
-            <h1 id="plans-heading" className="mt-2 font-display text-4xl font-extrabold text-gray-900 sm:text-5xl text-balance">
-              Subscription Cleaning Plans
-            </h1>
-            <p className="mt-4 text-lg text-gray-600 max-w-xl mx-auto">
-              Recurring cleaning on your schedule. Same cleaner every visit. Cancel anytime — no long contracts.
-            </p>
-          </div>
-        </section>
-
-        <section className="section" aria-label="Plan options">
-          <div className="container">
-            {error && (
-              <div className="alert alert-error mb-8 max-w-md mx-auto" role="alert">
-                <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                {error}
-              </div>
-            )}
-
-            <ul className="grid gap-8 md:grid-cols-3" role="list">
-              {SUBSCRIPTION_PLANS.map(plan => (
-                <li key={plan.id}>
-                  <article
-                    className={`relative flex flex-col h-full ${plan.popular ? 'card-featured' : 'card'} p-8`}
-                    aria-label={`${plan.name} — ${fmt(plan.monthlyPence)} per month`}
-                  >
-                    {plan.popular && (
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                        <span className="rounded-full bg-brand-600 px-4 py-1 text-xs font-bold text-white shadow-sm">
-                          Most Popular
-                        </span>
-                      </div>
-                    )}
-
-                    <header>
-                      <h2 className="font-display text-xl font-bold text-gray-900">{plan.name}</h2>
-                      <p className="mt-1.5 text-sm text-gray-600">{plan.description}</p>
-                    </header>
-
-                    <div className="mt-6">
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-display text-4xl font-extrabold text-gray-900">{fmt(plan.monthlyPence)}</span>
-                        <span className="text-gray-500">/month</span>
-                      </div>
-                      <p className="mt-1 text-sm text-gray-400">
-                        {plan.visitsPerMonth === 1 ? '1 visit' : `${plan.visitsPerMonth} visits`} · {plan.hoursPerVisit} hrs each
-                      </p>
-                    </div>
-
-                    <ul className="mt-6 flex-1 space-y-2.5" role="list">
-                      {plan.features.map((f, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700">
-                          <Check />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button
-                      onClick={() => subscribe(plan)}
-                      disabled={loading !== null}
-                      className={`btn btn-md mt-8 w-full ${plan.popular ? 'btn-primary' : 'btn-secondary'}`}
-                      aria-label={`Subscribe to ${plan.name} for ${fmt(plan.monthlyPence)} per month`}
-                    >
-                      {loading === plan.id ? <><Spinner size="sm" /> Redirecting…</> : 'Subscribe Now'}
-                    </button>
-                    <p className="mt-2.5 text-center text-xs text-gray-400">Secure · Cancel anytime · No setup fee</p>
-                  </article>
-                </li>
-              ))}
+    <div className="section py-16">
+      <div className="text-center mb-12">
+        <h1 className="heading-1 mb-4">Subscription Plans</h1>
+        <p className="text-body text-lg">Save money with regular cleaning subscriptions</p>
+      </div>
+      <div className="grid gap-6 md:grid-cols-3">
+        {plans.map(plan => (
+          <div key={plan.id} className="card-hover flex flex-col">
+            <h2 className="heading-3 mb-2">{plan.name}</h2>
+            <p className="text-gray-500 text-sm mb-4">{plan.description}</p>
+            <p className="text-3xl font-bold text-brand-600 mb-1">£{(plan.monthly_price_pence / 100).toFixed(0)}<span className="text-base font-normal text-gray-500">/month</span></p>
+            <p className="text-sm text-gray-500 mb-4">{plan.visits_per_month} visits x {plan.hours_per_visit}h</p>
+            <ul className="space-y-2 mb-6 flex-1">
+              {Array.isArray(plan.features) && plan.features.map((f, i) => <li key={i} className="text-sm text-gray-600 flex items-start gap-2"><span className="text-brand-600">&#10003;</span>{f}</li>)}
             </ul>
+            <button className="btn-primary w-full" disabled={redirecting === plan.id} onClick={() => handleSubscribe(plan)}>
+              {redirecting === plan.id ? 'Redirecting...' : 'Subscribe'}
+            </button>
           </div>
-        </section>
-      </main>
-      <Footer />
-    </>
+        ))}
+      </div>
+    </div>
   );
 }

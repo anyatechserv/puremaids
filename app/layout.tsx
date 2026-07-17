@@ -1,82 +1,37 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
-import CookieBanner from '@/components/gdpr/CookieBanner';
-import { BUSINESS, SERVICE_AREAS } from '@/lib/constants';
 import './globals.css';
+import Nav from '@/components/layout/Nav';
+import Footer from '@/components/layout/Footer';
+import CookieBanner from '@/components/gdpr/CookieBanner';
 
-const inter = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-plus-jakarta',
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
-});
-const interBody = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  themeColor: '#1b7c6d',
-};
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', display: 'swap' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BUSINESS.domain),
-  title: {
-    default: `${BUSINESS.name} | House Cleaning Bolton & Greater Manchester`,
-    template: `%s | ${BUSINESS.name}`,
-  },
-  description: `Professional house cleaning Bolton, Manchester, Bury, Wigan & Preston. DBS-checked, fully insured. Deep clean, end of tenancy, domestic cleaning from £59. Book with 20% deposit.`,
-  keywords: ['house cleaning Bolton','domestic cleaners near me','end of tenancy cleaning','deep cleaning services','office cleaning Bolton','cleaning services Manchester',
-    ...SERVICE_AREAS.map(a => `cleaning services ${a}`)],
-  authors: [{ name: BUSINESS.name, url: BUSINESS.domain }],
-  creator: BUSINESS.name,
-  publisher: BUSINESS.name,
+  title: { default: 'PureMaids — Professional Cleaning Services in Bolton', template: '%s | PureMaids' },
+  description: 'Book trusted, DBS-checked cleaners in Bolton and Greater Manchester. Instant quotes, secure deposits, satisfaction guarantee.',
+  keywords: ['cleaning services bolton', 'domestic cleaning', 'deep cleaning', 'end of tenancy cleaning', 'office cleaning'],
+  metadataBase: new URL('https://puremaids.co.uk'),
   openGraph: {
-    type: 'website', locale: 'en_GB',
-    url: BUSINESS.domain, siteName: BUSINESS.name,
-    title: `${BUSINESS.name} | Professional Cleaning Bolton & Manchester`,
-    description: 'Trusted cleaning services across Bolton & Greater Manchester. 4.9★ rated by 2,400+ customers.',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'PureMaids Professional Cleaning Services' }],
+    title: 'PureMaids — Professional Cleaning Services',
+    description: 'Book trusted, DBS-checked cleaners in Bolton. Instant quotes, secure deposits.',
+    type: 'website',
+    locale: 'en_GB',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: `${BUSINESS.name} | Professional Cleaning Bolton`,
-    description: 'DBS-checked cleaners. 4.9★ rating. Book from £59 with a 20% deposit.',
-  },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
-  alternates: { canonical: BUSINESS.domain },
-  manifest: '/manifest.json',
-};
-
-const lbSchema = {
-  '@context': 'https://schema.org', '@type': 'LocalBusiness',
-  '@id': `${BUSINESS.domain}/#org`,
-  name: BUSINESS.name, url: BUSINESS.domain,
-  telephone: BUSINESS.phone, email: BUSINESS.email,
-  address: { '@type': 'PostalAddress', streetAddress: '21 Deansgate', addressLocality: 'Bolton', addressRegion: 'Greater Manchester', postalCode: 'BL1 1DE', addressCountry: 'GB' },
-  geo: { '@type': 'GeoCoordinates', latitude: 53.578, longitude: -2.429 },
-  openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '08:00', closes: '18:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '09:00', closes: '16:00' },
-  ],
-  areaServed: SERVICE_AREAS.map(a => ({ '@type': 'City', name: a })),
-  priceRange: '££',
-  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '2400', bestRating: '5', worstRating: '1' },
-  sameAs: [BUSINESS.trustpilotUrl, BUSINESS.googleUrl],
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${inter.variable} ${interBody.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lbSchema) }} />
-      </head>
-      <body className="font-sans antialiased">
-        <a href="#main-content" className="skip-link">Skip to main content</a>
-        {children}
+    <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
+      <body className="font-sans">
+        <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white">
+          Skip to main content
+        </a>
+        <Nav />
+        <main id="main">{children}</main>
+        <Footer />
         <CookieBanner />
       </body>
     </html>

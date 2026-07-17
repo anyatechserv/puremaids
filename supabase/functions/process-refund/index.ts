@@ -1,6 +1,5 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import Stripe from "npm:stripe@15.0.0";
-import { createClient } from "npm:@supabase/supabase-js@2.45.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import Stripe from "https://esm.sh/stripe@15.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,191 +9,141 @@ const corsHeaders = {
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-06-20",
-  typescript: true,
 });
 
-const supabase = createClient(
+const supabaseAnon = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  Deno.env.get("SUPABASE_ANON_KEY")!
 );
+
+const supabaseAdmin = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+);
+
+interface RefundRequest {
+  paymentId?: string;
+  amountPence?: number;
+  reason?: string;
+  mode?: string;
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
-  if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405, headers: corsHeaders });
-  }
-
   try {
-    const body = await req.json();
-
-    // Verify the caller is an admin
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Missing authorization header" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user } } = await supabase.auth.getUser(token);
-    if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+
+    const { data: { user }, error: authError } = await supabaseAnon.auth.getUser(token);
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const { data: admin } = await supabase
+    const { data: adminProfile } = await supabaseAdmin
       .from("admin_profiles")
-      .select("id")
+      .select("role")
       .eq("user_id", user.id)
-      .maybeSingle();
+      .single();
 
-    if (!admin) {
-      return new Response(
-        JSON.stringify({ error: "Admin access required" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    if (!adminProfile) {
+      return new Response(JSON.stringify({ error: "Forbidden: admin access required" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // ─── Full refund ───
-    if (body.mode === "full") {
-      return await processFullRefund(body);
+    const body: RefundRequest = await req.json();
+
+    if (!body.paymentId || !body.amountPence || !body.reason) {
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // ─── Partial refund ───
-    return await processPartialRefund(body);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
-});
+    if (!Number.isInteger(body.amountPence) || body.amountPence <= 0 || body.amountPence > 10000000) {
+      return new Response(JSON.stringify({ error: "Invalid amount" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-async function processFullRefund(body: {
-  paymentId: string;
-  reason?: string;
-}) {
-  // Fetch the payment record
-  const { data: payment, error: fetchErr } = await supabase
-    .from("payments")
-    .select("id, stripe_charge_id, stripe_payment_intent_id, amount_pence, refund_amount_pence")
-    .eq("id", body.paymentId)
-    .maybeSingle();
+    const validReasons = ["requested_by_customer", "duplicate", "fraudulent", "service_not_provided", "other"];
+    if (!validReasons.includes(body.reason)) {
+      return new Response(JSON.stringify({ error: "Invalid reason" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-  if (fetchErr || !payment) {
-    return new Response(
-      JSON.stringify({ error: "Payment not found" }),
-      { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
+    const { data: payment, error: payError } = await supabaseAdmin
+      .from("payments")
+      .select("id, stripe_charge_id, stripe_payment_intent_id, amount_pence, refund_amount_pence, status")
+      .eq("id", body.paymentId)
+      .single();
 
-  const refundableAmount = payment.amount_pence - (payment.refund_amount_pence ?? 0);
-  if (refundableAmount <= 0) {
-    return new Response(
-      JSON.stringify({ error: "No refundable amount remaining" }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
+    if (payError || !payment) {
+      return new Response(JSON.stringify({ error: "Payment not found" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-  // Create Stripe refund
-  const refund = await stripe.refunds.create({
-    charge: payment.stripe_charge_id,
-    amount: refundableAmount,
-    reason: (body.reason as Stripe.RefundCreateParams.Reason) ?? "requested_by_customer",
-    metadata: {
-      payment_id: payment.id,
-      admin_refund: "true",
-    },
-  });
+    if (payment.status !== "succeeded" && payment.status !== "partially_refunded") {
+      return new Response(JSON.stringify({ error: "Payment not eligible for refund" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-  // Update payment record
-  const totalRefunded = (payment.refund_amount_pence ?? 0) + refundableAmount;
-  await supabase
-    .from("payments")
-    .update({
-      refund_amount_pence: totalRefunded,
-      refunded_at: new Date().toISOString(),
-      status: "refunded",
-    })
-    .eq("id", payment.id);
+    const alreadyRefunded = payment.refund_amount_pence || 0;
+    const maxRefundable = payment.amount_pence - alreadyRefunded;
+    if (body.amountPence > maxRefundable) {
+      return new Response(JSON.stringify({ error: "Refund amount exceeds refundable balance" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-  return new Response(
-    JSON.stringify({
-      refundId: refund.id,
-      amountRefundedPence: refundableAmount,
-      status: refund.status,
-    }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-  );
-}
+    const refund = await stripe.refunds.create({
+      payment_intent: payment.stripe_payment_intent_id,
+      amount: body.amountPence,
+      reason: body.reason as Stripe.RefundCreateParams.Reason,
+      metadata: {
+        admin_user_id: user.id,
+        admin_role: adminProfile.role,
+        payment_id: body.paymentId,
+      },
+    });
 
-async function processPartialRefund(body: {
-  paymentId: string;
-  amountPence: number;
-  reason?: string;
-}) {
-  const { data: payment, error: fetchErr } = await supabase
-    .from("payments")
-    .select("id, stripe_charge_id, amount_pence, refund_amount_pence")
-    .eq("id", body.paymentId)
-    .maybeSingle();
+    const newTotalRefund = alreadyRefunded + body.amountPence;
+    const newStatus = newTotalRefund >= payment.amount_pence ? "refunded" : "partially_refunded";
 
-  if (fetchErr || !payment) {
-    return new Response(
-      JSON.stringify({ error: "Payment not found" }),
-      { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
+    await supabaseAdmin
+      .from("payments")
+      .update({
+        refund_amount_pence: newTotalRefund,
+        refunded_at: new Date().toISOString(),
+        status: newStatus,
+      })
+      .eq("id", body.paymentId);
 
-  const alreadyRefunded = payment.refund_amount_pence ?? 0;
-  const refundableAmount = payment.amount_pence - alreadyRefunded;
-
-  if (body.amountPence > refundableAmount) {
-    return new Response(
-      JSON.stringify({
-        error: `Refund amount exceeds refundable balance. Maximum: ${refundableAmount}p`,
-      }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
-
-  const refund = await stripe.refunds.create({
-    charge: payment.stripe_charge_id,
-    amount: body.amountPence,
-    reason: (body.reason as Stripe.RefundCreateParams.Reason) ?? "requested_by_customer",
-    metadata: {
-      payment_id: payment.id,
-      admin_refund: "true",
-    },
-  });
-
-  const totalRefunded = alreadyRefunded + body.amountPence;
-  const newStatus = totalRefunded >= payment.amount_pence
-    ? "refunded"
-    : "partially_refunded";
-
-  await supabase
-    .from("payments")
-    .update({
-      refund_amount_pence: totalRefunded,
-      refunded_at: new Date().toISOString(),
-      status: newStatus,
-    })
-    .eq("id", payment.id);
-
-  return new Response(
-    JSON.stringify({
+    return new Response(JSON.stringify({
       refundId: refund.id,
       amountRefundedPence: body.amountPence,
       status: refund.status,
-    }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-  );
-}
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    console.error("Refund error:", msg);
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
